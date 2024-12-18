@@ -1,22 +1,25 @@
-import openai
 import os
+import requests
 from dotenv import load_dotenv
 
-# Carregando a chave da API do arquivo .env
+# Carregar as variáveis de ambiente do arquivo .env
 load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
-print(api_key)
 
-# Configurando a API OpenAI
-openai.api_key = api_key
+# Obter o token da API da variável de ambiente
+API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
 
-while True:
-    prompt = input("Digite algo (ou 'sair' para encerrar): ")
-    if prompt.lower() == "sair":
-        break
-    # Fazendo uma solicitação ao modelo com o prompt do usuário
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    print(response['choices'][0]['message']['content'])
+# Cabeçalhos de autenticação
+headers = {
+    "Authorization": f"Bearer {API_TOKEN}"
+}
+
+# URL de exemplo para um modelo (GPT-2)
+API_URL = "https://api-inference.huggingface.co/models/gpt2"
+
+# Solicitação para gerar texto
+prompt = "Olá, como você está?"
+payload = {"inputs": prompt}
+response = requests.post(API_URL, headers=headers, json=payload)
+
+# Exibe a resposta da API
+print(response.json())
